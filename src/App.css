@@ -1,0 +1,151 @@
+.App {
+  text-align: center;
+  background-color: #222;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;  
+  color: white;
+}
+
+.Todo-main {
+  background-color: #3B5998;
+  height: 500px;
+  padding: 20px;
+  color: white;
+}
+
+.Todo-task {
+  background-color: transparent;
+
+  width: 300px;
+  height: 50px;
+
+  border: 1px solid white;
+  border-radius: 10px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+
+  margin: 20px;
+  margin-right: 0;
+
+  text-align: center;
+  color: white;
+
+  font-size: 20px;
+  outline:none;
+}
+
+.Todo-task::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+
+  text-align: center;
+}
+
+.Todo-button {
+  background-color: transparent;
+
+  width: 100px;
+  height: 54px;
+
+  border: 1px solid white;
+  border-left: none;
+  border-radius: 10px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+
+  margin: 20px;
+  margin-left: 0;
+
+  color: white;
+
+  font-size: 20px;
+  outline:none;
+}
+
+.searchBar {
+  background-color: transparent;
+
+  border: 1px solid white;
+  border-radius: 10px;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+
+  margin: 20px;
+  margin-right: 0;
+
+  text-align: center;
+  color: white;
+  outline:none;
+}
+
+.searchBar::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
+.filter-buttons {
+  background-color: transparent;
+
+  border: 1px solid white;
+  border-left: none;
+
+  color: white;
+  outline:none;
+}
+
+.last-right-button {
+  border-radius: 10px;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.tasksList {
+  list-style-type: none;
+}
+
+.list-items {
+  font-family: "Lucida Console", Monaco, monospace;
+  color: white;
+  text-align: left;
+  margin: 2px;
+  margin-bottom: 10px;
+}
+
+.edit-buttons-span {
+  text-align: center;
+}
+
+.edit-buttons {
+  margin-right: 10px;
+  border-radius: 10px;
+  background-color: transparent;
+  color: lightblue;
+  border: 1px solid lightblue;
+  outline:none;
+}
+
+.item-status {
+  text-align: center;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
