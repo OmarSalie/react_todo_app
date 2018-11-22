@@ -3,16 +3,15 @@ import './App.css';
 
 import logo from './logo.svg';
 import TodoApp from './TodoApp';
-// import Test from './Test';
 
-class App extends React.Component {
+class App extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
   }
 
   public render() {
     return (
-      <div className="App">
+        <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">To Do App</h1>

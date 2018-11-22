@@ -1,6 +1,7 @@
 .App {
   text-align: center;
   background-color: #222;
+  height: 100vh;
 }
 
 .App-logo {
@@ -29,6 +30,24 @@
   height: 500px;
   padding: 20px;
   color: white;
+}
+
+.dropdown-list {
+  width: 100px;
+  height: 45px;
+
+  font-size: 20px;
+  text-align: center;
+
+  padding: 10px;
+
+  background-color: #3B5998;
+  color: white;
+
+  outline:none;
+
+  border: 1px solid white;
+  border-radius: 6px;
 }
 
 .Todo-task {
@@ -116,7 +135,7 @@
   border-bottom-left-radius: 0;
 }
 
-.tasksList {
+.tasksList ul{
   list-style-type: none;
 }
 

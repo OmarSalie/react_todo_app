@@ -1,10 +1,14 @@
 import * as React from "react";
 import todoApi from './todoApi';
+import ListItems from './ListItems';
+import ChangeList from './ChangeList';
+import Display from './Display';
+import AddItem from './AddItem';
 
 class TodoApp extends React.Component<any, any> {
   public state = {
+    list: undefined,
     task: undefined,
-    id: undefined,
     tasks: [] as any[],
     display: undefined,
     search: undefined
@@ -13,8 +17,8 @@ class TodoApp extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
 
+    this.state.list = props.list;
     this.state.task = props.task;
-    this.state.id = props.id;
     this.state.tasks = props.list;
     this.state.display = props.display;
     this.state.search = props.search;
@@ -22,29 +26,8 @@ class TodoApp extends React.Component<any, any> {
 //==================================================================================================================================
 // Set state by input
 //==================================================================================================================================
-  changeTask = (event: any) => {
-    this.setState({ task: event.target.value});
-  }
-
-  changeSearch = (event: any) => {
-    this.setState({ search: event.target.value });
-    this.searchByTask();
-  }
-//==================================================================================================================================
-// Set state by API
-//==================================================================================================================================
-  createTask = () => {
-    todoApi.create({ task: this.state.task, done: false })
-      .then(
-        (result) => {
-          this.setState({id: result})
-        }
-      )
-      .catch(
-        (e) => {
-          console.log(e)
-        }
-      )
+  changeList = (event: any) => {
+    this.setState({ list: event.target.value }, () => {
       if(this.state.display == "all") {
         this.loadAllTasks();
       }
@@ -54,8 +37,34 @@ class TodoApp extends React.Component<any, any> {
       if(this.state.display == "incomplete") {
         this.loadIncompleteTasks()
       }
-      if(this.state.display == "search") {
-        this.displaySearched()
+    });    
+  }  
+
+  changeTask = (event: any) => {
+    this.setState({ task: event.target.value });
+  }
+
+  changeSearch = (event: any) => {
+    this.setState({ search: event.target.value }, () => {
+      this.searchByTask();
+    });
+  }
+//==================================================================================================================================
+// Set state by API
+//==================================================================================================================================
+  createTask = () => {
+    // todoApi.create({ task: this.state.task, done: false })
+
+    todoApi.create({ task: this.state.task, done: false, list: this.state.list })
+
+      if(this.state.display == "all") {
+        this.loadAllTasks();
+      }
+      if(this.state.display == "complete") {
+        this.loadCompleteTasks();
+      }
+      if(this.state.display == "incomplete") {
+        this.loadIncompleteTasks()
       }
   }
   
@@ -70,9 +79,6 @@ class TodoApp extends React.Component<any, any> {
     if(this.state.display == "incomplete") {
       this.loadIncompleteTasks()
     }
-    if(this.state.display == "search") {
-      this.displaySearched()
-    }
   }
 
   updateTask = (props: any) => {
@@ -86,15 +92,32 @@ class TodoApp extends React.Component<any, any> {
     if(this.state.display == "incomplete") {
       this.loadIncompleteTasks()
     }
-    if(this.state.display == "search") {
-      this.displaySearched()
-    }
   }
 
   loadAllTasks = () => {
-    todoApi.all()
+    todoApi.filterBy('list', this.state.list)
     .then(
       (result) =>  {
+        this.setState({tasks: result}, () => {
+
+        });
+      }
+    )
+    .catch(
+      (e) => {
+        console.log(e);
+      }
+    )
+  }
+
+  loadCompleteTasks = () => {
+    todoApi.filterBy('list', this.state.list)
+    .then(
+      (specificList) => {
+        const result = specificList.filter(
+          function(result) {
+          return result['done'] == true;
+        })
         this.setState({
           tasks: result
         })
@@ -107,26 +130,14 @@ class TodoApp extends React.Component<any, any> {
     )
   }
 
-  loadCompleteTasks = () => {
-    todoApi.filterBy('done', true)
-    .then(
-      (result) =>  {
-        this.setState({   
-          tasks: result  
-        })
-      }
-    )
-    .catch(
-      (e) => {
-        console.log(e);
-      }
-    )
-  }
-
   loadIncompleteTasks = () => {
-    todoApi.filterBy('done', false)
+    todoApi.filterBy('list', this.state.list)
     .then(
-      (result) =>  {
+      (specificList) => {
+        const result = specificList.filter(
+          function(result) {
+          return result['done'] == false;
+        })
         this.setState({
           tasks: result
         })
@@ -141,8 +152,13 @@ class TodoApp extends React.Component<any, any> {
 
   searchByTask = () => {
     let searchFor = this.state.search
-    todoApi.filterByAny('task', searchFor).then(
-      (result) =>  {
+    todoApi.filterBy('list', this.state.list)
+    .then(
+      (specificList) => {
+        const result = specificList.filter(
+          function(result) {
+          return result['task'].includes(searchFor);
+        })
         this.setState({
           tasks: result
         })
@@ -159,12 +175,15 @@ class TodoApp extends React.Component<any, any> {
 //==================================================================================================================================
   componentWillMount = () => {
     this.defaultDisplay();
+    this.defaultList();
     this.loadAllTasks();
   }
 
   componentDidMount = () => {
     document.title = "To Do App"
   }
+
+  sh
 //==================================================================================================================================
 // Display state
 //==================================================================================================================================
@@ -175,11 +194,12 @@ class TodoApp extends React.Component<any, any> {
     this.loadAllTasks();
   }
 
-  displaySearched = () => {
+  defaultList = () => {
     this.setState({
-      display: "searched"
+      list: "list1"
+    }, () => {
+      this.loadAllTasks();
     })
-    this.searchByTask();
   }
 
   displayComplete = () => {
@@ -200,78 +220,33 @@ class TodoApp extends React.Component<any, any> {
 //==================================================================================================================================
   public render() {
     //==============================================================================================================================
-    // Create list
-    //==============================================================================================================================
-    const tasks = this.state.tasks;
-    let items = [] as any[];
-    if(typeof tasks == "undefined") {
-
-    }
-    else {
-      for(let i = 0; i < tasks.length; i++) {
-        items.push(
-          <span>
-            <li 
-              className="list-items" 
-              key={tasks[i].id}>
-              <span className="edit-buttons-span">
-                <button className="edit-buttons" onClick={() => {this.updateTask({ id: tasks[i].id })}}>
-                  Done
-                </button>
-                <button className="edit-buttons" onClick={() => {this.deleteTask({ id: tasks[i].id })}}>
-                  X
-                </button>
-              </span>
-              {tasks[i].task}
-              {tasks[i].done ? <span className="item-status">[DONE]</span> : <span className="item-status">[TO DO]</span>}
-            </li>
-            {/* <li key={tasks[i].id}> {tasks[i].task} {tasks[i].done && <span> [DONE]</span>} </li> */}
-            
-          </span>)
-      }
-    }
-    //==============================================================================================================================
     // Returned HTML(JSX)
     //==============================================================================================================================
     return (
       <div className="Todo-main">
+        <ChangeList 
+          list = {this.state.list}
+          changeList = {this.changeList}
+        />
         <div className="Todo-input">
-          <input 
-            type="text" 
-            className="Todo-task" 
-            placeholder="Enter new Todo"
-            onChange={ event => this.changeTask(event) }
+          <AddItem 
+            changeTask = {this.changeTask}
+            createTask = {this.createTask}
           />
-          <button 
-            className="Todo-button"
-            onClick={this.createTask}>
-            Add Todo
-          </button>
-          <div className="display">
-            <input
-              type="text"
-              className="searchBar"
-              placeholder="Search for Task"
-              value={this.state.search}
-              onChange={ event => this.changeSearch(event) }
-              
+          <Display 
+            search = {this.state.search}
+            changeSearch = {this.changeSearch}
+            defaultDisplay = {this.defaultDisplay}
+            displayIncomplete = {this.displayIncomplete}
+            displayComplete = {this.displayComplete}
+          />
+          <div className="tasksList">
+            <ListItems 
+              tasks = {this.state.tasks}
+              update = {this.updateTask}
+              delete = {this.deleteTask}
             />
-            {/* <button className="filter-buttons" onClick={this.displaySearched}>
-              Search
-            </button> */}
-            <button className="filter-buttons" onClick={this.defaultDisplay}>
-              ALL
-            </button>
-            <button className="filter-buttons" onClick={this.displayIncomplete}>
-              TO-DO
-            </button>
-            <button className="filter-buttons last-right-button" onClick={this.displayComplete}>
-              DONE
-            </button>
           </div>
-          <ul className="tasksList">
-            { items }
-          </ul>
         </div>
       </div>
     );
