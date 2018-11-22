@@ -9,6 +9,7 @@ class TodoApp extends React.Component<any, any> {
   public state = {
     list: undefined,
     task: undefined,
+    updateTask: undefined,
     tasks: [] as any[],
     display: undefined,
     search: undefined
@@ -42,6 +43,10 @@ class TodoApp extends React.Component<any, any> {
 
   changeTask = (event: any) => {
     this.setState({ task: event.target.value });
+  }
+
+  changeUpdateTask = (event: any) => {
+    this.setState({ updateTask: event.target.value });
   }
 
   changeSearch = (event: any) => {
@@ -82,7 +87,36 @@ class TodoApp extends React.Component<any, any> {
   }
 
   updateTask = (props: any) => {
+    todoApi.update(props.id, { task: this.state.updateTask })
+
+    if(this.state.display == "all") {
+      this.loadAllTasks();
+    }
+    if(this.state.display == "complete") {
+      this.loadCompleteTasks();
+    }
+    if(this.state.display == "incomplete") {
+      this.loadIncompleteTasks()
+    }
+  }
+
+  updateDoneTrue = (props: any) => {
     todoApi.update(props.id, { done: true })
+
+    if(this.state.display == "all") {
+      this.loadAllTasks();
+    }
+    if(this.state.display == "complete") {
+      this.loadCompleteTasks();
+    }
+    if(this.state.display == "incomplete") {
+      this.loadIncompleteTasks()
+    }
+  }
+
+  updateDoneFalse = (props: any) => {
+    todoApi.update(props.id, { done: false })
+    
     if(this.state.display == "all") {
       this.loadAllTasks();
     }
@@ -98,9 +132,7 @@ class TodoApp extends React.Component<any, any> {
     todoApi.filterBy('list', this.state.list)
     .then(
       (result) =>  {
-        this.setState({tasks: result}, () => {
-
-        });
+        this.setState({tasks: result});
       }
     )
     .catch(
@@ -183,7 +215,6 @@ class TodoApp extends React.Component<any, any> {
     document.title = "To Do App"
   }
 
-  sh
 //==================================================================================================================================
 // Display state
 //==================================================================================================================================
@@ -243,8 +274,11 @@ class TodoApp extends React.Component<any, any> {
           <div className="tasksList">
             <ListItems 
               tasks = {this.state.tasks}
-              update = {this.updateTask}
+              changeTask = {this.changeUpdateTask}
+              updateTask = {this.updateTask}
+              updateTrue = {this.updateDoneTrue}
               delete = {this.deleteTask}
+              updateFalse = {this.updateDoneFalse}
             />
           </div>
         </div>
